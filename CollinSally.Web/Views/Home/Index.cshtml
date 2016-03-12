@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Home";
+    ViewBag.IsHome = true;
+}
+
+<div class="fullscreen-image" id="wedding-logo-image">
+
+    <div class="fullscreen-image-text">
+        <img src="@Url.Content("~/Content/Images/wedding_logo.png")" alt="" width="100%" />
+        <h3>Let us know if you're coming!</h3>
+        <a href="@Url.Action("Rsvp", "Celebration")" class="btn btn-lg">RSVP</a>
+    </div>
+</div>

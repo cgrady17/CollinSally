@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title | Collin &amp; Sally Grady</title>
+    @Styles.Render("~/Content/CSS")
+    @RenderSection("HeaderScripts", false)
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-8546022-17', 'auto');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body>
+    <header class="horizontal-w sm-rgt-mn @(ViewBag.IsHome == true ? "homepage" : "")">
+        <div class="container">
+            <div class="col-md-3 col-sm-3 logo-wrap">
+                <div class="logo">
+                    <a href="@Url.Action("Index", "Home")">
+                        <img src="@Url.Content("~/Content/Images/logo.png")" width="275" id="img-logo-w1" alt="logo" class="img-logo-w1">
+                    </a>
+                </div>
+                <div id="menu-icon">
+                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                </div>
+            </div>
+            <nav id="nav-wrap" class="nav-wrap1 col-md-9 col-sm-9">
+                <div class="container">
+                    <ul id="nav">
+                        <li>@Html.ActionLink("RSVP", "RSVP", "Celebration")</li>
+                        <li>@Html.ActionLink("Location", "Location", "Celebration")</li>
+                        <li>@Html.ActionLink("Photos", "Index", "Photos")</li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div>
+        @RenderBody()
+    </div>
+
+    @if (ViewBag.IsHome != true)
+    {
+        <footer id="footer">
+            <div class="row">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-5">
+                    <h2>
+                        Sally <span class="glyphicon glyphicon-heart"></span> Collin
+                    </h2>
+                </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("Index", "Home")" id="footer-logo"></a>
+                    <p>Copyright &copy; 2016@(DateTime.Now.Year > 2016 ? " - " + DateTime.Now.Year : "") @Html.ActionLink("CollinSally.com", "Index", "Home"). All Rights Reserved.</p>
+                    <p>Designed, Developed, and Hosted by Connor Grady.</p>
+                    <p>CollinSally.com @($"v{ViewContext.Controller.GetType().Assembly.GetName().Version}")</p>
+                </div>
+            </div>
+        </footer>
+    }
+    @Scripts.Render("~/Assets/Scripts")
+    @RenderSection("FooterScripts", required: false)
+</body>
+</html>

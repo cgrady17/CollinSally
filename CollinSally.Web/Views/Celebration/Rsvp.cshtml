@@ -1,0 +1,125 @@
+﻿@model CollinSally.Web.ViewModels.RsvpViewModel
+@{
+    ViewBag.Title = "RSVP Now";
+}
+@*<div class="page-header" id="rsvp-header">
+        <div class="page-header-text">
+            <h1>@ViewBag.Title</h1>
+            <h4>Are you attending?</h4>
+        </div>
+    </div>*@
+
+<div class="page-content">
+
+    <div id="rsvp-form-container" class="form-container">
+        <div class="page-sub-header">
+            <h2>RSVP BELOW</h2>
+            <h4>let us know if you'll be celebrating with us</h4>
+        </div>
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @id = "rsvp-form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Full Name" })
+                    @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.EmailAddress, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control", @placeholder = "Email Address" })
+                    @Html.ValidationMessageFor(m => m.EmailAddress, null, new { @class = "text-danger" })
+
+                    <div class="alert alert-dismissable alert-info" style="margin-top: 20px;" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>Don't worry!</strong> We'll keep your information completely private and only use it for event-related communications.
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(m => m.Attending, new { @class = "control-label" })
+                    <div class="radio-horizontal-group">
+                        <label class="checkbox-inline">
+                            @Html.RadioButtonFor(m => m.Attending, true, new { @class = "form-control", @data_radio_bool = true })
+                            <span class="radio-label-text">Yes</span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.RadioButtonFor(m => m.Attending, false, new { @class = "form-control", @data_radio_bool = false })
+                            <span class="radio-label-text">No</span>
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Attending, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group" id="otherAttendeesGroup" style="display: none;">
+                @Html.LabelFor(m => m.OtherAttendees, new { @class = "control-label" })
+                <label class="checkbox-inline">
+                    @Html.RadioButtonFor(m => m.OtherAttendees, true, new { @class = "form-control", @data_radio_bool = true }) Yes
+                </label>
+                <label class="checkbox-inline">
+                    @Html.RadioButtonFor(m => m.OtherAttendees, false, new { @class = "form-control", @data_radio_bool = false }) No
+                </label>
+            </div>
+
+            <div id="attendee-list" style="display: none;">
+                <div class="row list-item form-group">
+                    <div class="col-md-5">
+                        <label for="Attendees[0].Name" class="control-label">Attendee Name</label>
+                        <input type="text" id="Attendees[0].Name" name="Attendees[0].Name" class="form-control" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="Attendees[0].EmailAddress" class="control-label">Attendee Email Address</label>
+                        <input type="email" id="Attendees[0].EmailAddress" name="Attendees[0].EmailAddress" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="list-remove btn btn-danger" style="position: relative; top: 50%; transform: translateY(-50%);">Remove</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a href="#" class="list-add btn btn-success">Add Attendee</a>
+                </div>
+            </div>
+
+            <div class="form-group" style="text-align: center; display: none;">
+                <button type="submit" class="btn btn-success btn-lg">Submit</button>
+            </div>
+
+            <div class="alert alert-dismissable alert-success" role="alert" style="margin-top: 30px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>You're safe!</strong> Your connection to CollinSally.com is completely secure and encrypted. Look for the <span class="glyphicon glyphicon-lock"></span> in your browser's address bar.
+            </div>
+
+            @Html.HiddenFor(m => m.Website)
+            @Html.HiddenFor(m => m.CaptchaPass)
+        }
+        <div class="spinner form-loader" style="display: none;">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+        </div>
+        <div id="rsvp-form-output">
+        </div>
+
+        <div id="rsvp-next" style="display: none;">
+            <h3>Now that we know you're coming, may we recommend looking into</h3>
+            <div class="row">
+                <div class="col-lg-4">
+                    <a href="@Url.Action("TravelInfo")" class="btn btn-lg btn-info">Booking & Travel Info</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("Destination")" class="btn btn-lg btn-info">the Destination</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("GuestBook")" class="btn btn-lg btn-info">signing the Guest Book</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section FooterScripts
+{
+    @Scripts.Render("~/Assets/jQueryVal");
+}
