@@ -29,6 +29,16 @@ namespace CollinSally.Web.ViewModels
         [StringLength(150, MinimumLength = 5)]
         public string Name { get; set; }
 
+        public string FriendlyName
+        {
+            get
+            {
+                if (Name == null) return null;
+
+                return Name.Contains(" ") ? Name.Split(' ')[0] : Name;
+            }
+        }
+
         public List<RsvpAttendeeViewModel> Attendees { get; set; }
 
         #region Anti-Bot

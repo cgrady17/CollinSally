@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Confirm your Access";
+}
+<div class="page-content">
+    <h1 class="page-title">Confirm your Access</h1>
+    <div class="alert alert-warning">
+        <strong>Hold it!</strong> Enter the Password below to access the desired page.
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div style="text-align: center">
+            <label for="password">Enter the Password</label>
+            <input type="password" class="form-control" name="password" id="password" style="margin: 0 auto;" />
+            <br />
+            <input type="submit" class="btn btn-info" value="Submit" />
+        </div>
+    }
+
+    @if (ViewBag.BadPass == true)
+    {
+        <br />
+        <div class="alert alert-danger">
+            <strong>Nope, not it!</strong> The Password you provided was incorrect. Please try again.
+        </div>
+    }
+</div>
+@section FooterScripts
+{
+    <script>
+        $(function() {
+            $("#password").focus();
+        });
+    </script>
+}

@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Manage RSVPs";
+}
+@section HeaderScripts
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/DataTables/css/dataTables.bootstrap.min.css")" />
+    <style>
+        #rsvp-stats .col-md-4 {
+            text-align: center;
+        }
+    </style>
+}
+<div class="page-content">
+    <h1 class="page-title">Manage RSVPs</h1>
+    <div class="alert alert-info">
+        You can view the submitted RSVPs below, each row representing one of the Attendees from the set of all RSVPs. You can search in the "Search" box, order ascending/descending for a column by clicking on the column header, and change pages using the page controls under the table.
+    </div>
+    <div class="row" id="rsvp-stats">
+        <div class="col-md-4">
+            <h2 class="text-info"><span data-value="total-num">Loading...</span></h2>
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-success"><span data-value="total-yes">Loading...</span></h2>
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-danger"><span data-value="total-no">Loading...</span></h2>
+        </div>
+    </div>
+    <table id="rsvp-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email Address</th>
+                <th>Attending</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email Address</th>
+                <th>Attending</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@section FooterScripts
+{
+    <script src="@Url.Content("~/Scripts/DataTables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/DataTables/dataTables.bootstrap.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+            $('#rsvp-table').DataTable({
+                "ajax": '@Url.Action("Read")',
+                "columns": [
+                    { "data": "ID" },
+                    { "data": "Name" },
+                    { "data": "EmailAddress" },
+                    { "data": "Attending" }
+                ]
+            });
+
+            $.get('@Url.Action("Read", new { id = 1 })', function (data) {
+                $("span[data-value='total-num']").html(data + " total");
+            });
+
+            $.get('@Url.Action("Read", new { id = 2 })', function (data) {
+                $("span[data-value='total-yes']").html(data + " yes");
+            });
+
+            $.get('@Url.Action("Read", new { id = 3 })', function (data) {
+                $("span[data-value='total-no']").html(data + " no");
+            });
+        });
+    </script>
+}

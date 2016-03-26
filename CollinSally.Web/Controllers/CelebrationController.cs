@@ -3,6 +3,7 @@ using CollinSally.Web.ViewModels;
 using Grady.Framework.Mvc;
 using SendGrid;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
@@ -93,11 +94,110 @@ namespace CollinSally.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Photos()
+        {
+            return View();
+        }
+
+        #region Manage RSVPs
+
+        public ActionResult Manage()
+        {
+            bool? isAuthenticated = Session["IsAuthenticated"] as bool?;
+
+            bool? badPass = TempData["BadPass"] as bool?;
+
+            if (badPass.HasValue && badPass.Value) ViewBag.BadPass = true;
+
+            return View(isAuthenticated.HasValue && isAuthenticated.Value ? "Manage" : "SecurityCheck");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manage(string password)
+        {
+            if (!string.IsNullOrWhiteSpace(password) && password == "Maggie2016")
+            {
+                Session["IsAuthenticated"] = true;
+            }
+            else
+            {
+                TempData["BadPass"] = true;
+            }
+
+            return Manage();
+        }
+
+        public async Task<JsonResult> Read(int? id)
+        {
+            using (CollinSallyWedding db = new CollinSallyWedding())
+            {
+                switch (id)
+                {
+                    case 1:
+                        return Json(await db.RSVPs.CountAsync(), JsonRequestBehavior.AllowGet);
+
+                    case 2:
+                        return Json(await db.RSVPs.CountAsync(x => x.Attending), JsonRequestBehavior.AllowGet);
+
+                    case 3:
+                        return Json(await db.RSVPs.CountAsync(x => !x.Attending), JsonRequestBehavior.AllowGet);
+                }
+
+                List<RsvpExistingViewModel> existingRsvps = await (from ra in db.RSVPAttendees
+                                                                   join r in db.RSVPs on ra.RSVP_ID equals r.ID
+                                                                   select new RsvpExistingViewModel
+                                                                   {
+                                                                       ID = r.ID,
+                                                                       Name = ra.Name,
+                                                                       EmailAddress = ra.EmailAddress,
+                                                                       Attending = r.Attending
+                                                                   }).ToListAsync();
+
+                return Json(new
+                {
+                    data = existingRsvps
+                        .Distinct()
+                        .Select(x => new
+                        {
+                            x.ID,
+                            x.Name,
+                            EmailAddress = "<a href='mailto:" + x.EmailAddress + "'>" + x.EmailAddress + "</a>",
+                            Attending = x.Attending ? "Yes" : "No"
+                        })
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
+        [HttpGet]
+        public async Task<ActionResult> TestEmail()
+        {
+            await SendRsvpEmailAsync(new RsvpViewModel
+            {
+                Attendees = new List<RsvpAttendeeViewModel>
+                {
+                    new RsvpAttendeeViewModel
+                    {
+                        EmailAddress = "cgrady17@outlook.com",
+                        Name = "Connor Grady"
+                    }
+                },
+                Attending = true,
+                EmailAddress = "cgrady17@outlook.com",
+                Name = "Connor Grady",
+                OtherAttendees = false
+            });
+
+            return HttpNotFound();
+        }
+
         private async Task SendRsvpEmailAsync(RsvpViewModel model)
         {
             SendGridMessage message = new SendGridMessage
             {
-                From = new MailAddress("sally-collin@collinsally.com", "Sally & Collin"),
+                From = new MailAddress("sally-collin@collinsally.com", "Sally & Collin Grady"),
                 Subject = "RSVP Confirmation | Sally & Collin's Celebration",
                 Html = this.RenderPartialViewToString("RSVPEmail", model)
             };
